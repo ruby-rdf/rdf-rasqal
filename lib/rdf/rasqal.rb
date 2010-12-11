@@ -7,5 +7,6 @@ module RDF
     autoload :VERSION, 'rdf/rasqal/version'
     autoload :FFI,     'rdf/rasqal/ffi'
     autoload :World,   'rdf/rasqal/world'
+    autoload :Query,   'rdf/rasqal/query'
   end # Rasqal
 end # RDF

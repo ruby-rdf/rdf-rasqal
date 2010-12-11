@@ -2,6 +2,7 @@ module RDF::Rasqal
   ##
   # An FFI wrapper for the `rasqal_world` struct.
   class World < FFI::ManagedStruct
+    include FFI
     layout :opened, :int,
            :raptor_world, :pointer
 
@@ -20,34 +21,38 @@ module RDF::Rasqal
     ##
     # @param  [FFI::Pointer] ptr
     def initialize(ptr = nil)
-      super(ptr || FFI.rasqal_new_world())
+      super(ptr || rasqal_new_world())
     end
 
     ##
     # @param  [FFI::Pointer] ptr
     # @return [void]
-    def self.release(ptr)
-      FFI.rasqal_free_world(self)
+    def self.release(ptr = false)
+      if ptr.eql?(false)
+        Thread.current[:rasqal_world] = nil
+      else
+        rasqal_free_world(ptr)
+      end
     end
 
     ##
     # @param  [FFI::Pointer] ptr
     #   a pointer to a `raptor_world` struct
     def raptor=(ptr)
-      FFI.rasqal_world_set_raptor(self, ptr)
+      rasqal_world_set_raptor(self, ptr)
     end
 
     ##
     # @return [FFI::Pointer]
     #   a pointer to a `raptor_world` struct
     def raptor
-      FFI.rasqal_world_get_raptor(self) # TODO: return an RDF::Raptor::World instance
+      rasqal_world_get_raptor(self) # TODO: return an RDF::Raptor::World instance
     end
 
     ##
     # @return [void] `self`
     def open!
-      FFI.rasqal_world_open(self)
+      rasqal_world_open(self)
       return self
     end
   end # World
