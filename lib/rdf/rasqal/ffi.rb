@@ -29,16 +29,20 @@ module RDF::Rasqal
     attach_variable :rasqal_version_release, :int
     attach_variable :rasqal_version_decimal, :int
 
+    include RDF::Raptor::FFI::V1_4
     # TODO: these should be inherited from `RDF::Raptor::FFI::V1`
     typedef :pointer, :raptor_sequence
     typedef :pointer, :raptor_uri
     typedef :pointer, :raptor_iostream
     typedef :pointer, :raptor_locator
+    typedef :pointer, :raptor_statement
     callback :raptor_message_handler, [:pointer, :raptor_locator, :string], :void
 
     typedef :pointer, :rasqal_world
     typedef :pointer, :rasqal_query
     typedef :pointer, :rasqal_query_results
+    typedef :pointer, :rasqal_variables_table
+    typedef :pointer, :rasqal_row
     typedef :pointer, :rasqal_prefix
     typedef :pointer, :rasqal_variable
     typedef :pointer, :rasqal_literal
@@ -47,6 +51,7 @@ module RDF::Rasqal
     typedef :pointer, :rasqal_data_graph
     typedef :pointer, :rasqal_expression
     enum :rasqal_query_verb, [:unknown, :select, :construct, :describe, :ask, :delete, :insert, :update]
+    enum :rasqal_query_results_type, [:bindings, :boolean, :graph, :syntax]
     callback :rasqal_generate_bnodeid_handler, [:rasqal_query, :pointer, :string], :string
     callback :rasqal_generate_bnodeid_handler2, [:rasqal_world, :pointer, :string], :string # librasqal 0.9.20+
 
@@ -117,5 +122,36 @@ module RDF::Rasqal
       attach_function :rasqal_query_get_having_condition, [:rasqal_query, :int], :rasqal_expression   # librasqal 0.9.20+
     rescue FFI::NotFoundError
     end
+
+    attach_function :rasqal_new_query_results, [:rasqal_world, :rasqal_query, :rasqal_query_results_type, :rasqal_variables_table], :rasqal_query_results
+    attach_function :rasqal_free_query_results, [:rasqal_query_results], :void
+    attach_function :rasqal_query_results_get_query, [:rasqal_query_results], :rasqal_query
+    attach_function :rasqal_query_results_is_bindings, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_is_boolean, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_is_graph, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_is_syntax, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_get_count, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_next, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_finished, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_get_bindings, [:rasqal_query_results, :pointer, :pointer], :int
+    attach_function :rasqal_query_results_get_binding_value, [:rasqal_query_results, :int], :rasqal_literal
+    attach_function :rasqal_query_results_get_binding_name, [:rasqal_query_results, :int], :string
+    attach_function :rasqal_query_results_get_binding_value_by_name, [:rasqal_query_results, :string], :rasqal_literal
+    attach_function :rasqal_query_results_get_bindings_count, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_get_triple, [:rasqal_query_results], :raptor_statement
+    attach_function :rasqal_query_results_next_triple, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_get_boolean, [:rasqal_query_results], :int
+    attach_function :rasqal_query_results_write2, [:raptor_iostream, :rasqal_query_results, :string, :string, :raptor_uri, :raptor_uri], :int
+    attach_function :rasqal_query_results_write, [:raptor_iostream, :rasqal_query_results, :raptor_uri, :raptor_uri], :int
+    attach_function :rasqal_query_results_read2, [:raptor_iostream, :rasqal_query_results, :string, :string, :raptor_uri, :raptor_uri], :int
+    attach_function :rasqal_query_results_read, [:raptor_iostream, :rasqal_query_results, :raptor_uri, :raptor_uri], :int
+    attach_function :rasqal_query_results_add_row, [:rasqal_query_results, :rasqal_row], :int
+    attach_function :rasqal_query_results_remove_query_reference, [:rasqal_query_results], :void
+    attach_function :rasqal_query_results_get_variables_table, [:rasqal_query_results], :rasqal_variables_table
+    attach_function :rasqal_query_results_get_world, [:rasqal_query_results], :rasqal_world
+
+    attach_function :rasqal_new_variables_table, [:rasqal_world], :rasqal_variables_table
+    attach_function :rasqal_new_variables_table_from_variables_table, [:rasqal_variables_table], :rasqal_variables_table
+    attach_function :rasqal_free_variables_table, [:rasqal_variables_table], :void
   end # FFI
 end # RDF::Rasqal

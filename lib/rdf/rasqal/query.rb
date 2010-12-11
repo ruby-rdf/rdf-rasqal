@@ -3,7 +3,7 @@ module RDF::Rasqal
   # An FFI wrapper for the `rasqal_query` struct.
   class Query < FFI::ManagedStruct
     include FFI
-    layout :world, :pointer
+    layout :world, :pointer # the actual layout is non-public
 
     ##
     # @param  [FFI::Pointer] ptr
@@ -132,8 +132,10 @@ module RDF::Rasqal
 
     ##
     # @return [QueryResults]
-    def execute
-      rasqal_query_execute(self) # TODO: wrap the result
+    def execute(&block)
+      results = rasqal_query_execute(self)
+      results = !(results.null?) ? QueryResults.new(results) : nil
+      block_given? ? block.call(results) : results
     end
 
     ##

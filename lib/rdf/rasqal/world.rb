@@ -3,7 +3,7 @@ module RDF::Rasqal
   # An FFI wrapper for the `rasqal_world` struct.
   class World < FFI::ManagedStruct
     include FFI
-    layout :opened, :int,
+    layout :opened, :int, # the actual layout is non-public
            :raptor_world, :pointer
 
     ##

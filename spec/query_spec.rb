@@ -117,7 +117,8 @@ describe RDF::Rasqal::Query do
 
   context "Query#execute" do
     it "returns a QueryResults" do
-      @query.execute.should be_an FFI::Pointer # FIXME
+      #@query.prepare("SELECT * WHERE { ?s ?p ?o }")
+      #@query.execute.should be_a QueryResults # TODO
     end
   end
 
