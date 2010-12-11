@@ -20,12 +20,20 @@ module RDF::Rasqal
     end
     module_function :version
 
-    extend ::FFI::Library
+    include ::FFI
+    extend Library
     ffi_lib 'librasqal'
 
     attach_variable :rasqal_version_major, :int
     attach_variable :rasqal_version_minor, :int
     attach_variable :rasqal_version_release, :int
     attach_variable :rasqal_version_decimal, :int
+
+    typedef :pointer, :rasqal_world
+    attach_function :rasqal_new_world, [], :rasqal_world
+    attach_function :rasqal_free_world, [:rasqal_world], :void
+    attach_function :rasqal_world_set_raptor, [:rasqal_world, :pointer], :void
+    attach_function :rasqal_world_get_raptor, [:rasqal_world] , :pointer
+    attach_function :rasqal_world_open, [:rasqal_world], :int
   end # FFI
 end # RDF::Rasqal
