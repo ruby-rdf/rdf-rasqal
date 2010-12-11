@@ -1,7 +1,7 @@
 module RDF::Rasqal
   ##
   # An FFI wrapper for the `rasqal_query_results` struct.
-  class QueryResults < FFI::ManagedStruct
+  class QueryResults < FFI::Struct
     include FFI
     layout :world, :pointer # the actual layout is non-public
 
@@ -9,17 +9,18 @@ module RDF::Rasqal
     # @param  [FFI::Pointer] ptr
     def initialize(ptr = nil)
       world = World.initialize!
-      ptr = case ptr
+      case ptr
         when FFI::Pointer
           ptr
         when Query
-          rasqal_new_query_results(world, ptr, :bindings, rasqal_new_variables_table(world))
+          ptr = rasqal_new_query_results(world, ptr, :bindings, rasqal_new_variables_table(world))
+          super(AutoPointer.new(ptr, self.class.method(:release)))
         when nil
-          rasqal_new_query_results(world, nil, :bindings, rasqal_new_variables_table(world))
-        else nil
+          ptr = rasqal_new_query_results(world, nil, :bindings, rasqal_new_variables_table(world))
+          super(AutoPointer.new(ptr, self.class.method(:release)))
+        else
+          raise ArgumentError, "invalid argument: #{ptr.inspect}"
       end
-      raise ArgumentError, "invalid argument: #{ptr.inspect}" if ptr.nil? || ptr.null?
-      super(ptr)
     end
 
     ##
@@ -30,9 +31,9 @@ module RDF::Rasqal
     end
 
     ##
-    # @return [FFI::Pointer]
+    # @return [World]
     def world
-      rasqal_query_results_get_world(self)
+      World.new(rasqal_query_results_get_world(self))
     end
 
     ##
@@ -44,7 +45,7 @@ module RDF::Rasqal
     ##
     # @return [VariablesTable]
     def variables_table
-      rasqal_query_results_get_variables_table(self) # TODO: wrap the result
+      VariablesTable.new(rasqal_query_results_get_variables_table(self))
     end
 
     ##
@@ -94,7 +95,8 @@ module RDF::Rasqal
     # @param  [Integer, #to_i] index
     # @return [Literal]
     def binding_value(index)
-      rasqal_query_results_get_binding_value(self, index.to_i) # TODO: wrap the result
+      literal = rasqal_query_results_get_binding_value(self, index.to_i)
+      !(literal.null?) ? literal : nil # TODO: wrap the result
     end
 
     ##
@@ -109,7 +111,8 @@ module RDF::Rasqal
     # @param  [Symbol, #to_sym]
     # @return [Literal]
     def binding_value_by_name(name)
-      rasqal_query_results_get_binding_value_by_name(self, name.to_sym.to_s) # TODO: wrap the result
+      literal = rasqal_query_results_get_binding_value_by_name(self, name.to_sym.to_s)
+      !(literal.null?) ? literal : nil # TODO: wrap the result
     end
 
     ##

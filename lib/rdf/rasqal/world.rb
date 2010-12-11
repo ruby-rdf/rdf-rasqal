@@ -1,7 +1,7 @@
 module RDF::Rasqal
   ##
   # An FFI wrapper for the `rasqal_world` struct.
-  class World < FFI::ManagedStruct
+  class World < FFI::Struct
     include FFI
     layout :opened, :int, # the actual layout is non-public
            :raptor_world, :pointer
@@ -21,7 +21,15 @@ module RDF::Rasqal
     ##
     # @param  [FFI::Pointer] ptr
     def initialize(ptr = nil)
-      super(ptr || rasqal_new_world())
+      case ptr
+        when FFI::Pointer
+          super(ptr)
+        when nil
+          ptr = rasqal_new_world()
+          super(AutoPointer.new(ptr, self.class.method(:release)))
+        else
+          raise ArgumentError, "invalid argument: #{ptr.inspect}"
+      end
     end
 
     ##

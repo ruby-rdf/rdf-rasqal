@@ -52,6 +52,7 @@ module RDF::Rasqal
     typedef :pointer, :rasqal_expression
     enum :rasqal_query_verb, [:unknown, :select, :construct, :describe, :ask, :delete, :insert, :update]
     enum :rasqal_query_results_type, [:bindings, :boolean, :graph, :syntax]
+    enum :rasqal_variable_type, [:unknown, :normal, :anonymous]
     callback :rasqal_generate_bnodeid_handler, [:rasqal_query, :pointer, :string], :string
     callback :rasqal_generate_bnodeid_handler2, [:rasqal_world, :pointer, :string], :string # librasqal 0.9.20+
 
@@ -153,5 +154,17 @@ module RDF::Rasqal
     attach_function :rasqal_new_variables_table, [:rasqal_world], :rasqal_variables_table
     attach_function :rasqal_new_variables_table_from_variables_table, [:rasqal_variables_table], :rasqal_variables_table
     attach_function :rasqal_free_variables_table, [:rasqal_variables_table], :void
+    attach_function :rasqal_variables_table_add, [:rasqal_variables_table, :rasqal_variable_type, :string, :rasqal_literal], :rasqal_variable
+    attach_function :rasqal_variables_table_get, [:rasqal_variables_table, :int], :rasqal_variable
+    attach_function :rasqal_variables_table_get_value, [:rasqal_variables_table, :int], :rasqal_literal
+    attach_function :rasqal_variables_table_get_by_name, [:rasqal_variables_table, :string], :rasqal_variable
+    attach_function :rasqal_variables_table_has, [:rasqal_variables_table, :string], :int
+    attach_function :rasqal_variables_table_set, [:rasqal_variables_table, :string, :rasqal_literal], :int
+    attach_function :rasqal_variables_table_get_named_variables_count, [:rasqal_variables_table], :int
+    attach_function :rasqal_variables_table_get_anonymous_variables_count, [:rasqal_variables_table], :int
+    attach_function :rasqal_variables_table_get_total_variables_count, [:rasqal_variables_table], :int
+    attach_function :rasqal_variables_table_get_named_variables_sequence, [:rasqal_variables_table], :raptor_sequence
+    attach_function :rasqal_variables_table_get_anonymous_variables_sequence, [:rasqal_variables_table], :raptor_sequence
+    attach_function :rasqal_variables_table_get_names, [:rasqal_variables_table], :pointer
   end # FFI
 end # RDF::Rasqal

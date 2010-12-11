@@ -20,20 +20,20 @@ describe RDF::Rasqal::QueryResults do
   end
 
   context "QueryResults#world" do
-    it "returns a Pointer" do
-      @results.world.should be_an FFI::Pointer
+    it "returns a World" do
+      @results.world.should be_a World
     end
   end
 
   context "QueryResults#query" do
     it "returns a Query" do
-      @results.query # TODO
+      @results.query.should be_a Query
     end
   end
 
   context "QueryResults#variables_table" do
     it "returns a VariablesTable" do
-      @results.variables_table # TODO
+      @results.variables_table.should be_a VariablesTable
     end
   end
 

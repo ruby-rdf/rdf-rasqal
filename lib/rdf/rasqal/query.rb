@@ -1,14 +1,22 @@
 module RDF::Rasqal
   ##
   # An FFI wrapper for the `rasqal_query` struct.
-  class Query < FFI::ManagedStruct
+  class Query < FFI::Struct
     include FFI
     layout :world, :pointer # the actual layout is non-public
 
     ##
     # @param  [FFI::Pointer] ptr
     def initialize(ptr = nil)
-      super(ptr || rasqal_new_query(World.initialize!, 'sparql', nil))
+      case ptr
+        when FFI::Pointer
+          super(ptr)
+        when nil
+          ptr = rasqal_new_query(World.initialize!, 'sparql', nil)
+          super(AutoPointer.new(ptr, self.class.method(:release)))
+        else
+          raise ArgumentError, "invalid argument: #{ptr.inspect}"
+      end
     end
 
     ##
