@@ -1,13 +1,8 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe RDF::Rasqal::QueryResults do
-  before :all do
-    World.initialize!
-  end
-
-  after :all do
-    World.release
-  end
+  before(:all) { World.initialize! }
+  after(:all)  { World.release }
 
   context "QueryResults.new" do
     it "returns a new QueryResults instance" do
@@ -16,7 +11,8 @@ describe RDF::Rasqal::QueryResults do
   end
 
   before :each do
-    @results = QueryResults.new
+    @query   = Query.new
+    @results = QueryResults.new(@query)
   end
 
   context "QueryResults#world" do

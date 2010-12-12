@@ -28,18 +28,18 @@ module RDF::Rasqal
 
     ##
     # @return [VariablesTable] a copy of `self`
-    def dup
+    def clone
       copy = self.class.new(rasqal_new_variables_table_from_variables_table(self))
-      copy.taint if tainted?
+      copy.taint  if tainted?
+      copy.freeze if frozen?
       copy
     end
 
     ##
     # @return [VariablesTable] a copy of `self`
-    def clone
+    def dup
       copy = self.class.new(rasqal_new_variables_table_from_variables_table(self))
-      copy.taint  if tainted?
-      copy.freeze if frozen?
+      copy.taint if tainted?
       copy
     end
 
@@ -50,7 +50,7 @@ module RDF::Rasqal
     # @return [Variable]
     def add(type, name, value)
       var = rasqal_variables_table_add(self, type.to_sym, name.to_sym.to_s, value ? value.to_ptr : nil)
-      !(var.null?) ? var : nil # TODO: wrap the result
+      !(var.null?) ? Variable.new(var) : nil
     end
 
     ##
@@ -58,7 +58,7 @@ module RDF::Rasqal
     # @return [Variable]
     def get(index)
       var = rasqal_variables_table_get(self, index.to_i)
-      !(var.null?) ? var : nil # TODO: wrap the result
+      !(var.null?) ? Variable.new(var) : nil
     end
     alias_method :[], :get
 
@@ -75,7 +75,7 @@ module RDF::Rasqal
     # @return [Variable]
     def get_by_name(name)
       var = rasqal_variables_table_get_by_name(self, name.to_sym.to_s)
-      !(var.null?) ? var : nil # TODO: wrap the result
+      !(var.null?) ? Variable.new(var) : nil
     end
 
     ##

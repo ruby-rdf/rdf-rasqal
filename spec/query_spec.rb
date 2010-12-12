@@ -1,13 +1,8 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe RDF::Rasqal::Query do
-  before :all do
-    World.initialize!
-  end
-
-  after :all do
-    World.release
-  end
+  before(:all) { World.initialize! }
+  after(:all)  { World.release }
 
   context "Query.new" do
     it "returns a new Query instance" do

@@ -166,5 +166,13 @@ module RDF::Rasqal
     attach_function :rasqal_variables_table_get_named_variables_sequence, [:rasqal_variables_table], :raptor_sequence
     attach_function :rasqal_variables_table_get_anonymous_variables_sequence, [:rasqal_variables_table], :raptor_sequence
     attach_function :rasqal_variables_table_get_names, [:rasqal_variables_table], :pointer
+
+    attach_function :rasqal_new_variable_typed, [:rasqal_query, :rasqal_variable_type, :string, :rasqal_literal], :rasqal_variable
+    attach_function :rasqal_new_variable, [:rasqal_query, :string, :rasqal_literal], :rasqal_variable
+    attach_function :rasqal_new_variable_from_variable, [:rasqal_variable], :rasqal_variable
+    attach_function :rasqal_free_variable, [:rasqal_variable], :void
+    attach_function :rasqal_variable_write, [:rasqal_variable, :raptor_iostream], :void
+    attach_function :rasqal_variable_print, [:rasqal_variable, :pointer], :int
+    attach_function :rasqal_variable_set_value, [:rasqal_variable, :rasqal_literal], :void
   end # FFI
 end # RDF::Rasqal

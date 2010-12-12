@@ -8,6 +8,7 @@ module RDF
     autoload :FFI,            'rdf/rasqal/ffi'
     autoload :Query,          'rdf/rasqal/query'
     autoload :QueryResults,   'rdf/rasqal/query_results'
+    autoload :Variable,       'rdf/rasqal/variable'
     autoload :VariablesTable, 'rdf/rasqal/variables_table'
     autoload :World,          'rdf/rasqal/world'
   end # Rasqal

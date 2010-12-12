@@ -39,13 +39,15 @@ module RDF::Rasqal
     ##
     # @return [Query]
     def query
-      Query.new(rasqal_query_results_get_query(self))
+      query = rasqal_query_results_get_query(self)
+      !(query.null?) ? Query.new(query) : nil
     end
 
     ##
     # @return [VariablesTable]
     def variables_table
-      VariablesTable.new(rasqal_query_results_get_variables_table(self))
+      vars = rasqal_query_results_get_variables_table(self)
+      !(vars.null?) ? VariablesTable.new(vars) : nil
     end
 
     ##
