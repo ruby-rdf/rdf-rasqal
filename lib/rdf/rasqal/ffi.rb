@@ -29,7 +29,7 @@ module RDF::Rasqal
     attach_variable :rasqal_version_release, :int
     attach_variable :rasqal_version_decimal, :int
 
-    include RDF::Raptor::FFI::V1_4
+    include RDF::Raptor::FFI::V1
     # TODO: these should be inherited from `RDF::Raptor::FFI::V1`
     typedef :pointer, :raptor_sequence
     typedef :pointer, :raptor_uri
@@ -61,11 +61,8 @@ module RDF::Rasqal
     attach_function :rasqal_world_set_raptor, [:rasqal_world, :pointer], :void
     attach_function :rasqal_world_get_raptor, [:rasqal_world] , :pointer
     attach_function :rasqal_world_open, [:rasqal_world], :int
-    begin
-      attach_function :rasqal_world_set_default_generate_bnodeid_parameters, [:rasqal_world, :string, :int], :void                    # librasqal 0.9.20+
-      attach_function :rasqal_world_set_generate_bnodeid_handler, [:rasqal_world, :pointer, :rasqal_generate_bnodeid_handler2], :void # librasqal 0.9.20+
-    rescue FFI::NotFoundError
-    end
+    attach_function :rasqal_world_set_default_generate_bnodeid_parameters, [:rasqal_world, :string, :int], :void                    # librasqal 0.9.20+
+    attach_function :rasqal_world_set_generate_bnodeid_handler, [:rasqal_world, :pointer, :rasqal_generate_bnodeid_handler2], :void # librasqal 0.9.20+
 
     attach_function :rasqal_new_query, [:rasqal_world, :string, :pointer], :rasqal_query
     attach_function :rasqal_free_query, [:rasqal_query], :void
@@ -118,11 +115,8 @@ module RDF::Rasqal
     attach_function :rasqal_query_write, [:raptor_iostream, :rasqal_query, :raptor_uri, :raptor_uri], :int
     attach_function :rasqal_query_iostream_write_escaped_counted_string, [:rasqal_query, :raptor_iostream, :string, :size_t], :int
     attach_function :rasqal_query_escape_counted_string, [:rasqal_query, :string, :size_t, :pointer], :string
-    begin
-      attach_function :rasqal_query_get_having_conditions_sequence, [:rasqal_query], :raptor_sequence # librasqal 0.9.20+
-      attach_function :rasqal_query_get_having_condition, [:rasqal_query, :int], :rasqal_expression   # librasqal 0.9.20+
-    rescue FFI::NotFoundError
-    end
+    attach_function :rasqal_query_get_having_conditions_sequence, [:rasqal_query], :raptor_sequence # librasqal 0.9.20+
+    attach_function :rasqal_query_get_having_condition, [:rasqal_query, :int], :rasqal_expression   # librasqal 0.9.20+
 
     attach_function :rasqal_new_query_results, [:rasqal_world, :rasqal_query, :rasqal_query_results_type, :rasqal_variables_table], :rasqal_query_results
     attach_function :rasqal_free_query_results, [:rasqal_query_results], :void
